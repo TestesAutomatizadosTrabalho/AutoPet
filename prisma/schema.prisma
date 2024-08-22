@@ -1,33 +1,23 @@
-// schema.prisma
-
-datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+model User {
+  id    String   @id @default(uuid())
+  email String   @unique
+  nome  String
+  cep   String
+  pets  Pet[]
 }
 
-generator client {
-  provider = "prisma-client-js"
+model Pet {
+  id     String   @id @default(uuid())
+  nome   String
+  raca   String
+  dono   User     @relation(fields: [donoId], references: [id])
+  servicos Servico[]
 }
 
-model Product {
-  id         Int       @id @default(autoincrement())
-  name       String
-  price      Float
-  stock      Int
-  category   Category   @relation(fields: [categoryId], references: [id])
-  categoryId Int
-  orders     Order[]    @relation("ProductOrders")
-}
-
-model Category {
-  id       Int       @id @default(autoincrement())
-  name     String    @unique
-  products Product[]
-}
-
-model Order {
-  id          Int         @id @default(autoincrement())
-  orderDate   DateTime    @default(now())
-  totalAmount Float
-  products    Product[]   @relation("ProductOrders")
+model Servico {
+  id       String   @id @default(uuid())
+  tipo     String
+  data     DateTime
+  petId    String
+  pet      Pet      @relation(fields: [petId], references: [id])
 }
