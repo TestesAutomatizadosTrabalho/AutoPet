@@ -1,16 +1,35 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
 model User {
   id    String   @id @default(uuid())
   email String   @unique
   nome  String
   cep   String
-  pets  Pet[]
+  pets  UserPet[]
+  servicos Servico[]
+}
+
+model UserPet {
+  id String     @id @default(uuid())
+  userId String
+  user User     @relation(fields: [userId], references: [id])
+  petId String
+  pet Pet      @relation(fields: [petId], references: [id])
 }
 
 model Pet {
   id     String   @id @default(uuid())
   nome   String
   raca   String
-  dono   User     @relation(fields: [donoId], references: [id])
+  userId String
+  user   UserPet[]
   servicos Servico[]
 }
 
@@ -18,6 +37,8 @@ model Servico {
   id       String   @id @default(uuid())
   tipo     String
   data     DateTime
+  userId String
+  user User     @relation(fields: [userId], references: [id])
   petId    String
   pet      Pet      @relation(fields: [petId], references: [id])
 }
