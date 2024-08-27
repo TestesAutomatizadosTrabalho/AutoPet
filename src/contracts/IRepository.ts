@@ -1,5 +1,3 @@
-import { User } from "../entities/User";
-
 export interface IRepository<T> {
     getById(id: number): Promise<T>;
     findAll(): Promise<T[]>;

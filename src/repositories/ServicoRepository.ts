@@ -1,21 +1,21 @@
+import { Servico } from "entities/Servico";
 import { IRepository } from "../contracts/IRepository";
-import { User } from "../entities/User";
 
 
-export class UserRepo implements IRepository<User> {
-    private lista: User[] = [];
+export class ServicoRepo implements IRepository<Servico> {
+    private lista: Servico[] = [];
 
-    async getById(id: number): Promise<User> {
+    async getById(id: number): Promise<Servico> {
         const user = this.lista.find(c => c.id === id);
         if (!user) throw new Error('Usuário não encontrado');
         return user;
     }
 
-    async findAll(): Promise<User[]> {
+    async findAll(): Promise<Servico[]> {
         return this.lista;
     }
 
-    async save(entity: User): Promise<boolean> {
+    async save(entity: Servico): Promise<boolean> {
         this.lista.push(entity);
         return true;
     }
@@ -26,15 +26,11 @@ export class UserRepo implements IRepository<User> {
         return true;
     }
     
-    async findByName(nome: string): Promise<User[]> {
-        return this.lista.filter(c => c.nome === nome);
-    }
-
-    async update(id: number, entity: User): Promise<boolean> {
+    async update(id: number, entity: Servico): Promise<boolean> {
         if(!this.lista.find(c => c.id === id)) return false;
-
+        
         this.lista = this.lista.map(c => c.id === id ? entity : c);
-
+        
         return true;
     }
 }

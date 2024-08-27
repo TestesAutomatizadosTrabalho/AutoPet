@@ -8,37 +8,37 @@ generator client {
 }
 
 model User {
-  id    String   @id @default(uuid())
-  email String   @unique
-  nome  String
-  cep   String
-  pets  UserPet[]
-  servicos Servico[]
-}
-
-model UserPet {
-  id String     @id @default(uuid())
-  userId String
-  user User     @relation(fields: [userId], references: [id])
-  petId String
-  pet Pet      @relation(fields: [petId], references: [id])
+  id          Int        @id @default(autoincrement())
+  cpf         String        @unique
+  email       String        @unique
+  nome        String
+  cep         String
+  pets        Pet[]
+  Agendamento Agendamento[]
 }
 
 model Pet {
-  id     String   @id @default(uuid())
-  nome   String
-  raca   String
-  userId String
-  user   UserPet[]
-  servicos Servico[]
+  id          Int        @id @default(autoincrement())
+  nome        String
+  raca        String
+  userId      Int
+  user        User          @relation(fields: [userId], references: [id])
+  Agendamento Agendamento[]
 }
 
 model Servico {
-  id       String   @id @default(uuid())
-  tipo     String
-  data     DateTime
-  userId String
-  user User     @relation(fields: [userId], references: [id])
-  petId    String
-  pet      Pet      @relation(fields: [petId], references: [id])
+  id          Int        @id @default(autoincrement())
+  tipo        String
+  Agendamento Agendamento[]
+}
+
+model Agendamento {
+  id        Int   @id @default(autoincrement())
+  data      DateTime
+  servicoId Int
+  servico   Servico  @relation(fields: [servicoId], references: [id])
+  petId     Int
+  pet       Pet      @relation(fields: [petId], references: [id])
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
 }
