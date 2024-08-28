@@ -20,10 +20,10 @@ export class PetRepo implements IRepository<Pet> {
     }
 
     async delete(id: number): Promise<boolean> {
-        const result = this.lista.filter(c => c.id !== id);
-        if (result.length === this.lista.length) return false;
-        return true;
-    }
+        const originalLength = this.lista.length;
+        this.lista = this.lista.filter(c => c.id !== id);
+        return this.lista.length < originalLength;
+    }    
     
     async findByName(nome: string): Promise<Pet[]> {
         return this.lista.filter(c => c.nome === nome);
