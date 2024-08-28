@@ -65,7 +65,7 @@ describe('PetRepo', () => {
 
     it('deve retornar falso ao tentar atualizar um pet que não existe', async () => {
         const { sut } = createSut();
-        const resultado = await sut.update(999, { id: 999, nome: 'Ghost', raca: 'Mistery', userId: 999 });
+        const resultado = await sut.update(999, { id: 999, nome: 'Yannnnn', raca: 'AuAu', userId: 999 });
         expect(resultado).toBe(false);
     });
 
