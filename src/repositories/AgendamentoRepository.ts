@@ -21,10 +21,10 @@ export class AgendamentoRepo implements IRepository<Agendamento> {
     }
 
     async delete(id: number): Promise<boolean> {
-        const result = this.lista.filter(c => c.id !== id);
-        if (result.length === this.lista.length) return false;
-        return true;
-    }
+        const originalLength = this.lista.length;
+        this.lista = this.lista.filter(c => c.id !== id);
+        return this.lista.length < originalLength;
+    }    
     
     async update(id: number, entity: Agendamento): Promise<boolean> {
         if(!this.lista.find(c => c.id === id)) return false;
