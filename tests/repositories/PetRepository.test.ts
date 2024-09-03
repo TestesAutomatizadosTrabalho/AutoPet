@@ -25,7 +25,7 @@ describe('PetRepo', () => {
 
     it('deve lançar um erro se o pet não for encontrado pelo ID', async () => {
         const { sut } = createSut();
-        await expect(sut.getById(999)).rejects.toThrow('Pet não encontrado'); // Ajustado para a mensagem real do erro
+        await expect(sut.getById(999)).rejects.toThrow('Pet não encontrado');
     });
 
     it('deve retornar todos os pets', async () => {
@@ -73,5 +73,11 @@ describe('PetRepo', () => {
         const { sut, segundoPet } = createSut();
         const resultado = await sut.findByUserId(segundoPet.userId);
         expect(resultado).toEqual([segundoPet]);
+    });
+
+    it('deve retornar undefined ao buscar por CPF', async () => {
+        const { sut } = createSut();
+        const resultado = await sut.getByCPF('123.456.789-00');
+        expect(resultado).toBeUndefined();
     });
 });

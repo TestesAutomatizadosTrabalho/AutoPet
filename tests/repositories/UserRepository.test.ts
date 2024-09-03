@@ -1,15 +1,13 @@
-
 import { UserRepo } from "../../src/repositories/UserRepository";
 
-describe('cliente-repo', () => {
+describe('UserRepo', () => {
     function createSut(){
         const sut = new UserRepo();
         const teste = 'teste';
-        const umUser = {id: 1, cpf: '123', email: 'dafeaeeee@gmail.com', nome: 'Jonny', cep: '123'}
-        const segundoUser = {id: 2, cpf: '231', email: 'dd@gmail.com', nome: 'Alalala', cep: '32222'}
+        const umUser = {id: 1, cpf: '123', email: 'dafeaeeee@gmail.com', nome: 'Jonny', cep: '123'};
+        const segundoUser = {id: 2, cpf: '231', email: 'dd@gmail.com', nome: 'Alalala', cep: '32222'};
         sut.save(umUser);
-
-        return { sut , teste, umUser, segundoUser};
+        return { sut , teste, umUser, segundoUser };
     }
 
     it('Salvando um usuário', async() => {
@@ -61,7 +59,7 @@ describe('cliente-repo', () => {
     it('Atualizado com sucesso', async() => {
         const { sut, segundoUser } = createSut();
         sut.save(segundoUser);
-        const clienteAtualizado = {id: 1, cpf: '2222', email: 'EEE@gmail.com', nome: 'JonnyBeer', cep: '1234'}
+        const clienteAtualizado = {id: 1, cpf: '2222', email: 'EEE@gmail.com', nome: 'JonnyBeer', cep: '1234'};
         const resultado = await sut.update(1, clienteAtualizado);
         expect(resultado).toBe(true);
     });
@@ -69,9 +67,20 @@ describe('cliente-repo', () => {
     it('Usuário não encontrado para atualizar', async() => {
         const { sut, segundoUser } = createSut();
         sut.save(segundoUser);
-        const clienteAtualizado = {id: 100, cpf: '333333', email: 'EEE@gmail.com', nome: 'Lusgas', cep: '1234'}
+        const clienteAtualizado = {id: 100, cpf: '333333', email: 'EEE@gmail.com', nome: 'Lusgas', cep: '1234'};
         const resultado = await sut.update(10, clienteAtualizado);
         expect(resultado).toBe(false);
     });
 
+    it('deve retornar um usuário pelo CPF', async () => {
+        const { sut, umUser } = createSut();
+        const resultado = await sut.getByCPF(umUser.cpf);
+        expect(resultado).toEqual(umUser);
+    });
+
+    it('deve retornar undefined se o usuário não for encontrado pelo CPF', async () => {
+        const { sut } = createSut();
+        const resultado = await sut.getByCPF('000');
+        expect(resultado).toBeUndefined();
+    });
 });

@@ -26,7 +26,7 @@ describe('AgendamentoRepo', () => {
 
     it('deve lançar um erro se o agendamento não for encontrado pelo ID', async () => {
         const { sut } = createSut();
-        await expect(sut.getById(999)).rejects.toThrow('Agendamento não encontrado'); // Ajustado para a mensagem real do erro
+        await expect(sut.getById(999)).rejects.toThrow('Agendamento não encontrado');
     });
 
     it('deve retornar todos os agendamentos', async () => {
@@ -74,5 +74,11 @@ describe('AgendamentoRepo', () => {
         const { sut, segundoAgendamento } = createSut();
         const resultado = await sut.findByPetId(segundoAgendamento.petId);
         expect(resultado).toEqual([segundoAgendamento]);
+    });
+
+    it('deve retornar undefined ao buscar por CPF', async () => {
+        const { sut } = createSut();
+        const resultado = await sut.getByCPF('123.456.789-00');
+        expect(resultado).toBeUndefined();
     });
 });

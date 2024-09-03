@@ -88,4 +88,13 @@ describe('CadastroUsuarioUseCase', () => {
     it('Deve invalidar um email inválido', () => {
         expect(cadastroUsuarioUseCase['isValidEmail']('test@.com')).toBe(false); 
     });
+
+    it('Deve retornar false ao tentar cadastrar um usuário com um CPF que já existe', async () => {
+        const cpfExistente = '12345678909';
+        const usuarioExistente = new User(1, cpfExistente, 'existente@gmail.com', 'Maria', '12345-000');
+        await userRepository.save(usuarioExistente);
+        const result = await cadastroUsuarioUseCase.execute(2, cpfExistente, 'novo@gmail.com', 'João', '66754-000');
+        expect(result).toBe(false);
+    });
+    
 });

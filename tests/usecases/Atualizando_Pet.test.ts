@@ -5,12 +5,8 @@ import { IRepository } from '../../src/contracts/IRepository';
 class PetRepositoryMock implements IRepository<Pet> {
     private pets: Pet[] = [];
 
-    async getById(id: number): Promise<Pet> {
-        const pet = this.pets.find(pet => pet.id === id);
-        if (!pet) {
-            throw new Error('Pet não encontrado'); 
-        }
-        return pet;
+    async getById(id: number): Promise<Pet | undefined> {
+        return this.pets.find(pet => pet.id === id);
     }
 
     async findAll(): Promise<Pet[]> {
@@ -25,7 +21,7 @@ class PetRepositoryMock implements IRepository<Pet> {
     async delete(id: number): Promise<boolean> {
         const originalLength = this.pets.length;
         this.pets = this.pets.filter(pet => pet.id !== id);
-        return this.pets.length < originalLength; 
+        return this.pets.length < originalLength;
     }
 
     async update(id: number, entity: Pet): Promise<boolean> {
@@ -40,7 +36,6 @@ class PetRepositoryMock implements IRepository<Pet> {
     }
 }
 
-// Testes
 describe('AtualizarPetUseCase', () => {
     let petRepository: PetRepositoryMock;
     let atualizarPetUseCase: AtualizarPetUseCase;
@@ -50,9 +45,10 @@ describe('AtualizarPetUseCase', () => {
         atualizarPetUseCase = new AtualizarPetUseCase(petRepository);
     });
 
-    it('Deve lançar um erro ao tentar atualizar um pet que não existe', async () => {
-        await expect(atualizarPetUseCase.execute(999, 'Max', 'Golden Retriever'))
-            .rejects.toThrow('Pet não encontrado'); // Ajustado para esperar erro
+    it('Deve retornar um erro ao tentar atualizar um pet que não existe', async () => {
+        const result = await atualizarPetUseCase.execute(999, 'Max', 'Golden Retriever');
+        expect(result).toBeInstanceOf(Error);
+        expect(result).toEqual(new Error("Regra de negócio quebrada"));
     });
 
     it('Deve atualizar um pet existente com sucesso', async () => {
@@ -68,7 +64,8 @@ describe('AtualizarPetUseCase', () => {
         expect(result).toBe(true);
 
         const updatedPet = await petRepository.getById(1);
-        expect(updatedPet.nome).toBe('Max');
-        expect(updatedPet.raca).toBe('Golden Retriever');
+        expect(updatedPet).toBeDefined();
+        expect(updatedPet!.nome).toBe('Max');
+        expect(updatedPet!.raca).toBe('Golden Retriever');
     });
 });
