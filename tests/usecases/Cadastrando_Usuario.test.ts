@@ -2,7 +2,6 @@ import { CadastroUsuarioUseCase } from '../../src/usecase_user/cadastrando_usuar
 import { User } from '../../src/entities/User';
 import { IRepository } from '../../src/contracts/IRepository';
 
-// Mock do repositório para simular operações de banco de dados
 class UserRepositoryMock implements IRepository<User> {
     private users: User[] = [];
 
@@ -24,8 +23,9 @@ class UserRepositoryMock implements IRepository<User> {
     }
 
     async delete(id: number): Promise<boolean> {
+        const originalLength = this.users.length;
         this.users = this.users.filter(user => user.id !== id);
-        return true;
+        return this.users.length < originalLength; 
     }
 
     async update(id: number, entity: User): Promise<boolean> {
@@ -33,6 +33,10 @@ class UserRepositoryMock implements IRepository<User> {
         if (index === -1) return false;
         this.users[index] = entity;
         return true;
+    }
+
+    async getByCPF(cpf: string): Promise<User | undefined> {
+        return this.users.find(user => user.cpf === cpf);
     }
 }
 
@@ -70,18 +74,18 @@ describe('CadastroUsuarioUseCase', () => {
     });
 
     it('Deve validar corretamente um CPF válido', () => {
-        expect(cadastroUsuarioUseCase['isValidCPF']('12345678909')).toBe(true); // CPF válido formatado corretamente
+        expect(cadastroUsuarioUseCase['isValidCPF']('12345678909')).toBe(true); 
     });
 
     it('Deve invalidar um CPF inválido', () => {
-        expect(cadastroUsuarioUseCase['isValidCPF']('11111111111')).toBe(false); // CPF inválido por ser todos iguais
+        expect(cadastroUsuarioUseCase['isValidCPF']('11111111111')).toBe(false); 
     });
 
     it('Deve validar corretamente um email válido', () => {
-        expect(cadastroUsuarioUseCase['isValidEmail']('test@example.com')).toBe(true); // Email válido
+        expect(cadastroUsuarioUseCase['isValidEmail']('test@example.com')).toBe(true); 
     });
 
     it('Deve invalidar um email inválido', () => {
-        expect(cadastroUsuarioUseCase['isValidEmail']('test@.com')).toBe(false); // Email inválido devido à falta do domínio
+        expect(cadastroUsuarioUseCase['isValidEmail']('test@.com')).toBe(false); 
     });
 });

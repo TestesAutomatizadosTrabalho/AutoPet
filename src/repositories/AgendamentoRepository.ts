@@ -1,14 +1,13 @@
 import { Agendamento } from "entities/Agendamento";
 import { IRepository } from "../contracts/IRepository";
 
-
 export class AgendamentoRepo implements IRepository<Agendamento> {
     private lista: Agendamento[] = [];
 
     async getById(id: number): Promise<Agendamento> {
-        const user = this.lista.find(c => c.id === id);
-        if (!user) throw new Error('Usuário não encontrado');
-        return user;
+        const agendamento = this.lista.find(c => c.id === id);
+        if (!agendamento) throw new Error('Agendamento não encontrado');
+        return agendamento;
     }
 
     async findAll(): Promise<Agendamento[]> {
@@ -24,13 +23,13 @@ export class AgendamentoRepo implements IRepository<Agendamento> {
         const originalLength = this.lista.length;
         this.lista = this.lista.filter(c => c.id !== id);
         return this.lista.length < originalLength;
-    }    
-    
+    }
+
     async update(id: number, entity: Agendamento): Promise<boolean> {
-        if(!this.lista.find(c => c.id === id)) return false;
-        
-        this.lista = this.lista.map(c => c.id === id ? entity : c);
-        
+        const index = this.lista.findIndex(c => c.id === id);
+        if (index === -1) return false;
+
+        this.lista[index] = entity;
         return true;
     }
 
@@ -40,5 +39,8 @@ export class AgendamentoRepo implements IRepository<Agendamento> {
 
     async findByPetId(petId: number): Promise<Agendamento[]> {
         return this.lista.filter(c => c.petId === petId);
+    }
+    async getByCPF(cpf: string): Promise<Agendamento | undefined> {
+        return undefined;
     }
 }

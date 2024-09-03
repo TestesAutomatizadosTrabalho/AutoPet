@@ -4,4 +4,5 @@ export interface IRepository<T> {
     save(entity: T): Promise<boolean>;
     delete(id: number): Promise<boolean>;
     update(id: number, entity: T): Promise<boolean>;
+    getByCPF(cpf: string): Promise<T | undefined>;
 }

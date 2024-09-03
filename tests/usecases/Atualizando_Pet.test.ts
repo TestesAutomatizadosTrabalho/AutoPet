@@ -8,7 +8,7 @@ class PetRepositoryMock implements IRepository<Pet> {
     async getById(id: number): Promise<Pet> {
         const pet = this.pets.find(pet => pet.id === id);
         if (!pet) {
-            return null as any; 
+            throw new Error('Pet não encontrado'); 
         }
         return pet;
     }
@@ -23,8 +23,9 @@ class PetRepositoryMock implements IRepository<Pet> {
     }
 
     async delete(id: number): Promise<boolean> {
+        const originalLength = this.pets.length;
         this.pets = this.pets.filter(pet => pet.id !== id);
-        return true;
+        return this.pets.length < originalLength; 
     }
 
     async update(id: number, entity: Pet): Promise<boolean> {
@@ -33,8 +34,13 @@ class PetRepositoryMock implements IRepository<Pet> {
         this.pets[index] = entity;
         return true;
     }
+
+    async getByCPF(cpf: string): Promise<Pet | undefined> {
+        return undefined;
+    }
 }
 
+// Testes
 describe('AtualizarPetUseCase', () => {
     let petRepository: PetRepositoryMock;
     let atualizarPetUseCase: AtualizarPetUseCase;
@@ -45,8 +51,8 @@ describe('AtualizarPetUseCase', () => {
     });
 
     it('Deve lançar um erro ao tentar atualizar um pet que não existe', async () => {
-        const result = await atualizarPetUseCase.execute(999, 'Max', 'Golden Retriever');
-        expect(result).toBe(false); 
+        await expect(atualizarPetUseCase.execute(999, 'Max', 'Golden Retriever'))
+            .rejects.toThrow('Pet não encontrado'); // Ajustado para esperar erro
     });
 
     it('Deve atualizar um pet existente com sucesso', async () => {
@@ -59,7 +65,7 @@ describe('AtualizarPetUseCase', () => {
         await petRepository.save(pet);
 
         const result = await atualizarPetUseCase.execute(1, 'Max', 'Golden Retriever');
-        expect(result).toBe(true); 
+        expect(result).toBe(true);
 
         const updatedPet = await petRepository.getById(1);
         expect(updatedPet.nome).toBe('Max');

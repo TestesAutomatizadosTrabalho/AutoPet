@@ -10,6 +10,8 @@ describe('UserController', () => {
     controller = new UserController();
     user1 = new User(1, '122222', 'lusgas@gmail.com', 'Lusgas', '1234');
     user2 = new User(2, '987', 'yann@gmail.com', 'Yann', '876');
+    controller.create(user1);
+    controller.create(user2);
   });
 
   it('deve criar um novo usuário', () => {
@@ -19,7 +21,6 @@ describe('UserController', () => {
   });
 
   it('deve obter um usuário pelo ID', () => {
-    controller.create(user1);
     const resultado = controller.getById(user1.id);
     expect(resultado).toEqual(user1);
   });
@@ -30,7 +31,6 @@ describe('UserController', () => {
   });
 
   it('deve atualizar um usuário existente', () => {
-    controller.create(user1);
     const dadosAtualizados = { nome: 'Yannnn', cep: '543' };
     const resultado = controller.update(user1.id, dadosAtualizados);
     expect(resultado).toEqual({ ...user1, ...dadosAtualizados });
@@ -42,7 +42,6 @@ describe('UserController', () => {
   });
 
   it('deve deletar um usuário pelo ID', () => {
-    controller.create(user1);
     const resultado = controller.delete(user1.id);
     expect(resultado).toBe(true);
     expect(controller.list()).not.toContainEqual(user1);
@@ -54,9 +53,17 @@ describe('UserController', () => {
   });
 
   it('deve listar todos os usuários', () => {
-    controller.create(user1);
-    controller.create(user2);
     const resultado = controller.list();
     expect(resultado).toEqual([user1, user2]);
+  });
+
+  it('deve encontrar um usuário pelo CPF', () => {
+    const resultado = controller.getByCPF(user1.cpf);
+    expect(resultado).toEqual(user1);
+  });
+
+  it('deve retornar undefined se o usuário não for encontrado pelo CPF', () => {
+    const resultado = controller.getByCPF('000000');
+    expect(resultado).toBeUndefined();
   });
 });

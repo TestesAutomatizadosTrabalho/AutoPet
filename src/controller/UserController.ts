@@ -15,6 +15,10 @@ export class UserController implements IController<User> {
     return this.users.find(user => user.id === id);
   }
 
+  getByCPF(cpf: string): User | undefined {
+    return this.users.find(user => user.cpf === cpf);
+  }
+
   update(id: number, updatedUserData: Partial<User>): User | undefined {
     const user = this.getById(id);
     if (!user) {

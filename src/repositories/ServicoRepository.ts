@@ -1,14 +1,13 @@
 import { Servico } from "entities/Servico";
 import { IRepository } from "../contracts/IRepository";
 
-
 export class ServicoRepo implements IRepository<Servico> {
     private lista: Servico[] = [];
 
     async getById(id: number): Promise<Servico> {
-        const user = this.lista.find(c => c.id === id);
-        if (!user) throw new Error('Usuário não encontrado');
-        return user;
+        const servico = this.lista.find(servico => servico.id === id);
+        if (!servico) throw new Error('Serviço não encontrado');
+        return servico;
     }
 
     async findAll(): Promise<Servico[]> {
@@ -21,16 +20,20 @@ export class ServicoRepo implements IRepository<Servico> {
     }
 
     async delete(id: number): Promise<boolean> {
-        const result = this.lista.filter(c => c.id !== id);
-        if (result.length === this.lista.length) return false;
-        return true;
+        const originalLength = this.lista.length;
+        this.lista = this.lista.filter(servico => servico.id !== id);
+        return this.lista.length < originalLength;
     }
     
     async update(id: number, entity: Servico): Promise<boolean> {
-        if(!this.lista.find(c => c.id === id)) return false;
-        
-        this.lista = this.lista.map(c => c.id === id ? entity : c);
-        
+        const index = this.lista.findIndex(servico => servico.id === id);
+        if (index === -1) return false;
+
+        this.lista[index] = entity;
         return true;
+    }
+
+    async getByCPF(cpf: string): Promise<Servico | undefined> {
+        return undefined;
     }
 }

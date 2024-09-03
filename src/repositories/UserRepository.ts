@@ -1,12 +1,11 @@
 import { IRepository } from "../contracts/IRepository";
 import { User } from "../entities/User";
 
-
 export class UserRepo implements IRepository<User> {
     private lista: User[] = [];
 
     async getById(id: number): Promise<User> {
-        const user = this.lista.find(c => c.id === id);
+        const user = this.lista.find(user => user.id === id);
         if (!user) throw new Error('Usuário não encontrado');
         return user;
     }
@@ -21,20 +20,24 @@ export class UserRepo implements IRepository<User> {
     }
 
     async delete(id: number): Promise<boolean> {
-        const result = this.lista.filter(c => c.id !== id);
-        if (result.length === this.lista.length) return false;
-        return true;
+        const originalLength = this.lista.length;
+        this.lista = this.lista.filter(user => user.id !== id);
+        return this.lista.length < originalLength;
     }
-    
+
     async findByName(nome: string): Promise<User[]> {
-        return this.lista.filter(c => c.nome === nome);
+        return this.lista.filter(user => user.nome === nome);
     }
 
     async update(id: number, entity: User): Promise<boolean> {
-        if(!this.lista.find(c => c.id === id)) return false;
+        const index = this.lista.findIndex(user => user.id === id);
+        if (index === -1) return false;
 
-        this.lista = this.lista.map(c => c.id === id ? entity : c);
-
+        this.lista[index] = entity;
         return true;
+    }
+
+    async getByCPF(cpf: string): Promise<User | undefined> {
+        return this.lista.find(user => user.cpf === cpf);
     }
 }

@@ -26,7 +26,7 @@ describe('AgendamentoRepo', () => {
 
     it('deve lançar um erro se o agendamento não for encontrado pelo ID', async () => {
         const { sut } = createSut();
-        await expect(sut.getById(999)).rejects.toThrow('Usuário não encontrado');
+        await expect(sut.getById(999)).rejects.toThrow('Agendamento não encontrado'); // Ajustado para a mensagem real do erro
     });
 
     it('deve retornar todos os agendamentos', async () => {

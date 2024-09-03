@@ -25,7 +25,7 @@ describe('PetRepo', () => {
 
     it('deve lançar um erro se o pet não for encontrado pelo ID', async () => {
         const { sut } = createSut();
-        await expect(sut.getById(999)).rejects.toThrow('Usuário não encontrado');
+        await expect(sut.getById(999)).rejects.toThrow('Pet não encontrado'); // Ajustado para a mensagem real do erro
     });
 
     it('deve retornar todos os pets', async () => {

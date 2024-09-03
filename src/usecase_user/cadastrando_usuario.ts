@@ -13,8 +13,13 @@ export class CadastroUsuarioUseCase {
             throw new Error('CPF inválido.');
         }
 
-        const user = new User(id, cpf, email, nome, cep);
-        return this.userRepository.save(user);
+        const user = await this.userRepository.getByCPF(cpf);
+        if (user) {
+          return false; 
+        }
+        
+        const userNovo = new User(id, cpf, email, nome, cep);
+        return this.userRepository.save(userNovo);
     }
 
     private isValidCPF(cpf: string): boolean {

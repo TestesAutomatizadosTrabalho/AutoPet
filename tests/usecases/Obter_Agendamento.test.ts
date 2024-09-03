@@ -7,7 +7,7 @@ export class AgendamentoRepositoryMock implements IRepository<Agendamento> {
 
     async getById(id: number): Promise<Agendamento | undefined> {
         const agendamento = this.agendamentos.find(a => a.id === id);
-        return agendamento; // Retorna undefined se não encontrar
+        return agendamento; 
     }
 
     async findAll(): Promise<Agendamento[]> {
@@ -31,6 +31,11 @@ export class AgendamentoRepositoryMock implements IRepository<Agendamento> {
         if (index === -1) return false;
         this.agendamentos[index] = entity;
         return true;
+    }
+
+    async getByCPF(cpf: string): Promise<Agendamento | undefined> {
+        // Adicionando uma implementação básica para satisfazer a interface
+        throw new Error('Método getByCPF não suportado para Agendamento');
     }
 }
 
