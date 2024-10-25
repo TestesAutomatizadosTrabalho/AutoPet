@@ -1,18 +1,36 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import Home from './pages/Home';
-import Users from './pages/Users';
-import Pets from './pages/Pets';
-import Appointments from './pages/Appointments';
+import Home from './pages/Home.js';
+import Users from './pages/Users.js';
+import Pets from './pages/Pets.js';
+import Appointments from './pages/Appointments.js';
+
+const navStyle = {
+  backgroundColor: '#4CAF50', 
+  padding: '10px',
+  textAlign: 'center', 
+};
+
+const linkStyle = {
+  color: 'white', 
+  textDecoration: 'none', 
+  margin: '0 15px', 
+  fontSize: '18px', 
+};
+
+const activeLinkStyle = {
+  fontWeight: 'bold', 
+  textDecoration: 'underline', 
+};
 
 function App() {
   return (
     <Router>
       <div>
-        <nav>
-          <Link to="/">Home</Link> | 
-          <Link to="/users">Users</Link> | 
-          <Link to="/pets">Pets</Link> | 
-          <Link to="/appointments">Appointments</Link>
+        <nav style={navStyle}>
+          <Link to="/" style={linkStyle} activeStyle={activeLinkStyle}>Home</Link> | 
+          <Link to="/users" style={linkStyle} activeStyle={activeLinkStyle}>Users</Link> | 
+          <Link to="/pets" style={linkStyle} activeStyle={activeLinkStyle}>Pets</Link> | 
+          <Link to="/appointments" style={linkStyle} activeStyle={activeLinkStyle}>Appointments</Link>
         </nav>
 
         <Routes>

@@ -1,9 +1,22 @@
-import PetUpdateForm from '../components/PetUpdateForm';
+import PetUpdateForm from '../components/PetUpdateForm.js';
 
 function Pets() {
+  const containerStyle = {
+    display: 'flex',            
+    flexDirection: 'column',    
+    alignItems: 'center',       
+    marginTop: '50px',         
+  };
+
+  const titleStyle = {
+    fontSize: '24px',         
+    marginBottom: '20px',      
+    color: '#333',              
+  };
+
   return (
-    <div>
-      <h2>Atualizar Pet</h2>
+    <div style={containerStyle}>
+      <h2 style={titleStyle}>Atualizar Pet</h2>
       <PetUpdateForm />
     </div>
   );

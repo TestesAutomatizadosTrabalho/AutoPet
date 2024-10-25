@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-const axios = require('axios');
+import axios from 'axios';  // Alterado para a sintaxe import
 
 function UserForm() {
   const [name, setName] = useState('');

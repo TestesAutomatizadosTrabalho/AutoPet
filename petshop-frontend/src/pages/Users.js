@@ -1,9 +1,22 @@
-import UserForm from '../components/UserForm';
+import UserForm from '../components/UserForm.js';
 
 function Users() {
+  const containerStyle = {
+    display: 'flex',          
+    flexDirection: 'column',   
+    alignItems: 'center',     
+    marginTop: '50px',         
+  };
+
+  const titleStyle = {
+    fontSize: '24px',          
+    marginBottom: '20px',       
+    color: '#333',            
+  };
+
   return (
-    <div>
-      <h2>Cadastrar Usuário</h2>
+    <div style={containerStyle}>
+      <h2 style={titleStyle}>Cadastrar Usuário</h2>
       <UserForm />
     </div>
   );
