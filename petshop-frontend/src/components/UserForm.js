@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
+import axios from 'axios'; // Mover para o topo
 
 function UserForm() {
   const [name, setName] = useState('');
