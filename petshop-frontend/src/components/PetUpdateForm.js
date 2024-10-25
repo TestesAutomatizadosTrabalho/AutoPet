@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 
 function PetUpdateForm() {
@@ -17,17 +17,17 @@ function PetUpdateForm() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <input 
-        type="text" 
-        placeholder="ID do Pet" 
-        value={id} 
-        onChange={(e) => setId(e.target.value)} 
+      <input
+        type="text"
+        placeholder="ID do Pet"
+        value={id}
+        onChange={(e) => setId(e.target.value)}
       />
-      <input 
-        type="text" 
-        placeholder="Novo Nome" 
-        value={name} 
-        onChange={(e) => setName(e.target.value)} 
+      <input
+        type="text"
+        placeholder="Novo Nome"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
       />
       <button type="submit">Atualizar Pet</button>
     </form>

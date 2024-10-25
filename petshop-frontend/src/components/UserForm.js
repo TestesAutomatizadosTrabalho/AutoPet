@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios'; // Mover para o topo
+const axios = require('axios');
 
 function UserForm() {
   const [name, setName] = useState('');

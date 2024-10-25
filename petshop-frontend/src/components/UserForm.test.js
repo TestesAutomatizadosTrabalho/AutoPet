@@ -2,7 +2,9 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import UserForm from './UserForm';
 import '@testing-library/jest-dom';
 import React from 'react';
+jest.mock('axios');
 import axios from 'axios';
+
 
 jest.mock('axios');
 
