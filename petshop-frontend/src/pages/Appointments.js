@@ -1,4 +1,5 @@
 import AppointmentsList from '../components/AppointmentsList.js';
+import React from 'react';  
 
 function Appointments() {
   const containerStyle = {

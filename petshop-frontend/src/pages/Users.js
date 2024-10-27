@@ -1,17 +1,18 @@
+import React from 'react'; 
 import UserForm from '../components/UserForm.js';
 
 function Users() {
   const containerStyle = {
-    display: 'flex',          
-    flexDirection: 'column',   
-    alignItems: 'center',     
-    marginTop: '50px',         
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    marginTop: '50px',
   };
 
   const titleStyle = {
-    fontSize: '24px',          
-    marginBottom: '20px',       
-    color: '#333',            
+    fontSize: '24px',
+    marginBottom: '20px',
+    color: '#333',
   };
 
   return (
