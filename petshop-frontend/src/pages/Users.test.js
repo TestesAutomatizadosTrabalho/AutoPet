@@ -1,22 +1,79 @@
-import { render, screen } from '@testing-library/react';
-import Users from './Users';
-import UserForm from '../components/UserForm';
-import '@testing-library/jest-dom';
 import React from 'react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import Users from './Users';
 
-// Mock do UserForm para garantir que ele é renderizado corretamente
-jest.mock('../components/UserForm', () => () => <div>Mocked UserForm</div>);
+// Limpa o LocalStorage antes de cada teste
+beforeEach(() => {
+  localStorage.clear();
+});
 
-test('renderiza corretamente a página de usuários', () => {
-  render(<Users />);
+describe('Users Component', () => {
+  test('renderiza corretamente com nenhum usuário cadastrado', () => {
+    render(<Users />);
+    expect(screen.getByText('Cadastrar Usuário')).toBeInTheDocument();
+    expect(screen.getByText('Usuários Cadastrados:')).toBeInTheDocument();
+    expect(screen.getByText('Nenhum usuário cadastrado.')).toBeInTheDocument();
+  });
 
-  const pageTitle = screen.getByText(/Cadastrar Usuário/i);
-  const userForm = screen.getByText(/Mocked UserForm/i);
+  test('exibe usuários armazenados no LocalStorage', async () => {
+    const mockUsers = [
+      { name: 'Alice', email: 'alice@example.com' },
+      { name: 'Bob', email: 'bob@example.com' },
+    ];
+    localStorage.setItem('users', JSON.stringify(mockUsers));
 
-  // Verifica se o título foi renderizado
-  expect(pageTitle).toBeInTheDocument();
-  expect(pageTitle).toHaveStyle('font-size: 24px; margin-bottom: 20px; color: #333;');
+    render(<Users />);
 
-  // Verifica se o componente UserForm foi renderizado
-  expect(userForm).toBeInTheDocument();
+    // Usar uma função como matcher para localizar o texto
+    await waitFor(() => {
+      expect(screen.getByText((content) => content.includes('Alice'))).toBeInTheDocument();
+      expect(screen.getByText((content) => content.includes('alice@example.com'))).toBeInTheDocument();
+      expect(screen.getByText((content) => content.includes('Bob'))).toBeInTheDocument();
+      expect(screen.getByText((content) => content.includes('bob@example.com'))).toBeInTheDocument();
+    });
+  });
+
+  test('cadastra um novo usuário corretamente', async () => {
+    render(<Users />);
+
+    const nameInput = screen.getByPlaceholderText('Nome');
+    const emailInput = screen.getByPlaceholderText('Email');
+    const submitButton = screen.getByRole('button', { name: /cadastrar/i });
+
+    // Preenche e envia o formulário
+    fireEvent.change(nameInput, { target: { value: 'Carlos' } });
+    fireEvent.change(emailInput, { target: { value: 'carlos@example.com' } });
+    fireEvent.click(submitButton);
+
+    // Aguarda a renderização do novo usuário
+    await waitFor(() => {
+      expect(screen.getByText((content) => content.includes('Carlos'))).toBeInTheDocument();
+      expect(screen.getByText((content) => content.includes('carlos@example.com'))).toBeInTheDocument();
+    });
+
+    // Verifica se o usuário foi salvo no LocalStorage
+    const storedUsers = JSON.parse(localStorage.getItem('users'));
+    expect(storedUsers).toEqual([{ name: 'Carlos', email: 'carlos@example.com' }]);
+  });
+
+  test('atualiza a lista de usuários após cadastro', async () => {
+    render(<Users />);
+
+    expect(screen.getByText('Nenhum usuário cadastrado.')).toBeInTheDocument();
+
+    const nameInput = screen.getByPlaceholderText('Nome');
+    const emailInput = screen.getByPlaceholderText('Email');
+    const submitButton = screen.getByRole('button', { name: /cadastrar/i });
+
+    // Cadastra um novo usuário
+    fireEvent.change(nameInput, { target: { value: 'Carlos' } });
+    fireEvent.change(emailInput, { target: { value: 'carlos@example.com' } });
+    fireEvent.click(submitButton);
+
+    // Aguarda a lista ser atualizada
+    await waitFor(() => {
+      expect(screen.getByText((content) => content.includes('Carlos'))).toBeInTheDocument();
+    });
+  });
 });
