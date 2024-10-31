@@ -1,38 +1,83 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import UserForm from './UserForm';
-import '@testing-library/jest-dom';
 import React from 'react';
-jest.mock('axios');
-import axios from 'axios';
+import { render, screen, fireEvent } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import UserForm from './UserForm';
 
-
-jest.mock('axios');
-
-beforeAll(() => {
-  window.alert = jest.fn();
+//Mock para limpar o LocalStorage entre os testes
+beforeEach(() => {
+  localStorage.clear();
 });
 
-test('renderiza o formulário de usuário e envia dados', async () => {
+describe('UserForm Component', () => {
+  test('renderiza o formulário corretamente', () => {
+    render(<UserForm onUserAdded={() => {}} />);
 
-  axios.post.mockResolvedValueOnce({ data: { success: true } });
-
-  render(<UserForm />);
-
-  const inputNome = screen.getByPlaceholderText(/Nome/i);
-  const inputEmail = screen.getByPlaceholderText(/Email/i);
-  const button = screen.getByText(/Cadastrar/i);
-
-  fireEvent.change(inputNome, { target: { value: 'John Doe' } });
-  fireEvent.change(inputEmail, { target: { value: 'john@example.com' } });
-
-  fireEvent.click(button);
-
-  await waitFor(() => expect(axios.post).toHaveBeenCalledTimes(1));
-
-  expect(axios.post).toHaveBeenCalledWith('/api/users', {
-    name: 'John Doe',
-    email: 'john@example.com'
+    expect(screen.getByPlaceholderText('Nome')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Email')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /cadastrar/i })).toBeInTheDocument();
   });
 
-  expect(window.alert).toHaveBeenCalledWith('Usuário cadastrado com sucesso!');
+  test('preenche os campos de nome e email', () => {
+    render(<UserForm onUserAdded={() => {}} />);
+
+    const nameInput = screen.getByPlaceholderText('Nome');
+    const emailInput = screen.getByPlaceholderText('Email');
+
+    fireEvent.change(nameInput, { target: { value: 'Alice' } });
+    fireEvent.change(emailInput, { target: { value: 'alice@example.com' } });
+
+    expect(nameInput.value).toBe('Alice');
+    expect(emailInput.value).toBe('alice@example.com');
+  });
+
+  test('salva o usuário no LocalStorage e exibe mensagem ao enviar o formulário', () => {
+    const mockOnUserAdded = jest.fn();
+    render(<UserForm onUserAdded={mockOnUserAdded} />);
+
+    const nameInput = screen.getByPlaceholderText('Nome');
+    const emailInput = screen.getByPlaceholderText('Email');
+    const submitButton = screen.getByRole('button', { name: /cadastrar/i });
+
+    fireEvent.change(nameInput, { target: { value: 'Carlos' } });
+    fireEvent.change(emailInput, { target: { value: 'carlos@example.com' } });
+    fireEvent.click(submitButton);
+
+    expect(nameInput.value).toBe('');
+    expect(emailInput.value).toBe('');
+
+    //Verifica se o usuário foi salvo no LocalStorage
+    const storedUsers = JSON.parse(localStorage.getItem('users'));
+    expect(storedUsers).toEqual([{ name: 'Carlos', email: 'carlos@example.com' }]);
+
+    //Verifica se a função de callback foi chamada com os usuários atualizados
+    expect(mockOnUserAdded).toHaveBeenCalledWith(storedUsers);
+
+    //Verifica se a mensagem de sucesso foi exibida
+    expect(screen.getByTestId('user-message')).toHaveTextContent('Usuário cadastrado com sucesso!');
+  });
+
+  test('adiciona múltiplos usuários ao LocalStorage corretamente', () => {
+    render(<UserForm onUserAdded={() => {}} />);
+
+    const nameInput = screen.getByPlaceholderText('Nome');
+    const emailInput = screen.getByPlaceholderText('Email');
+    const submitButton = screen.getByRole('button', { name: /cadastrar/i });
+
+    //Cadastra o primeiro usuário
+    fireEvent.change(nameInput, { target: { value: 'Alice' } });
+    fireEvent.change(emailInput, { target: { value: 'alice@example.com' } });
+    fireEvent.click(submitButton);
+
+    //Cadastra o segundo usuário
+    fireEvent.change(nameInput, { target: { value: 'Bob' } });
+    fireEvent.change(emailInput, { target: { value: 'bob@example.com' } });
+    fireEvent.click(submitButton);
+
+    //Verifica se ambos os usuários estão no LocalStorage
+    const storedUsers = JSON.parse(localStorage.getItem('users'));
+    expect(storedUsers).toEqual([
+      { name: 'Alice', email: 'alice@example.com' },
+      { name: 'Bob', email: 'bob@example.com' },
+    ]);
+  });
 });
